@@ -4,5 +4,7 @@ i=1
 
 if 5 > 4: 
     i++
-ewse: 
+ewse if 6 < 4: 
     i--
+ewse: 
+    pwint("cum")

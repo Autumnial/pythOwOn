@@ -33,21 +33,40 @@ fn loadfile(path: &Path, string: &mut String) -> std::io::Result<()> {
 
 }
 
-fn to_words(string : &mut String) -> Vec<&str>{
+fn to_words(string : &mut String) -> Vec<String>{
     let bytes = string.as_bytes();
 
     let mut start = 0;
-    let mut words : Vec<&str> = Vec::new();
+    let mut words : Vec<String> = Vec::new();
     for (i, &byte) in bytes.iter().enumerate(){
-        if byte == b' ' || byte == b'(' {
-            words.push(&string[start..i]);
+        if byte == b' ' || byte == b'(' || byte == b':' || byte == b'\n' {
+            words.push(string[start..i].to_string());
             start = i;
         }
     }
 
-    words.push(&string[start..]);
+    words.push(string[start..].to_string());
 
     words
+}
+
+fn parse(words: &mut Vec<String>){
+    let iter = words.clone();
+    for (i, word) in iter.iter().enumerate(){
+        if word.contains("pwint"){
+            words[i] = String::from(word.replace("pwint", "print"));
+        } 
+        // if word == " pwint" {
+        //     words[i] = String::from(" print");
+        // } 
+        if word.contains("ewse"){
+            words[i] = String::from(word.replace("ewse", "else"));
+        }
+    }
+
+    for word in words{
+        print!("{}", word);
+    }
 }
 
 fn main() -> std::io::Result<()> {
@@ -65,11 +84,10 @@ fn main() -> std::io::Result<()> {
     let path = Path::new(args[1].as_str());
     let mut string = String::new();
     loadfile(path, &mut string)?;
-    let words = to_words(&mut string);
+    let mut words = to_words(&mut string);
 
-    for word in words{
-        println!("{}", word)
-    }
+    parse(&mut words);
+    
     Ok(())
 }
  
