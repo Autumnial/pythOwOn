@@ -120,6 +120,33 @@ fn main() -> std::io::Result<()> {
 
     createfile(path, &string); 
 
+    let mut filepath = env::current_dir().unwrap();
+    filepath.push("output");
+    filepath.push(path);
+    filepath.set_extension("py");
+
+
+    let command = std::process::Command::new("python3").arg(filepath).output();
+
+    match command {
+        Ok(output) => {
+
+            if !output.stdout.is_empty(){
+                println!("{}", String::from_utf8(output.stdout).unwrap());
+            }
+
+            if !output.stderr.is_empty(){
+                println!("{}", String::from_utf8(output.stderr).unwrap());
+            }
+
+        },
+        Err(error) => {
+            println!("{}", error);
+            std::process::exit(0);
+        }
+    };
+
+
     Ok(())
 }
  
