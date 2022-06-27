@@ -1,7 +1,7 @@
-use std::{fs::*, io::Read};
+use std::{fs::*, io::Read, io::Write};
 use std::path::{Path};
 use std::ffi::OsStr;
-use std::env;
+use std::{env, fs};
 use colored::Colorize;
 
 fn loadfile(path: &Path, string: &mut String) -> std::io::Result<()> { 
@@ -56,17 +56,45 @@ fn parse(words: &mut Vec<String>){
         if word.contains("pwint"){
             words[i] = String::from(word.replace("pwint", "print"));
         } 
-        // if word == " pwint" {
-        //     words[i] = String::from(" print");
-        // } 
         if word.contains("ewse"){
             words[i] = String::from(word.replace("ewse", "else"));
         }
+        if word.contains("ewif"){
+            words[i] = String::from(word.replace("ewif", "elif"));
+        }
     }
 
-    for word in words{
-        print!("{}", word);
+}
+
+fn createfile(path: &Path, string: &String){
+    let mut new_path = env::current_dir().unwrap();
+
+    new_path.push("output");
+    fs::create_dir_all(&new_path).expect("test");
+    new_path.push(path);
+    new_path.set_extension("py");
+    let path = new_path.clone();
+    let newfile = File::create(new_path);
+
+    let mut newfile = match newfile{
+        Ok(file) => file,
+        Err(_error) => {
+            println!("{}", format!("Error: Couldn't create file: {} ", path.display()).red().bold());
+            // println!("{}", _error);
+        	std::process::exit(0);
+        }
+    };
+
+    let result = write!(newfile, "{}", string);
+
+    match result{
+        Ok(_res) => (),
+        Err(_err) => {
+            println!("{}", format!("Something went wrong writing the file").red().bold());
+            std::process::exit(0)
+        }
     }
+    
 }
 
 fn main() -> std::io::Result<()> {
@@ -88,6 +116,10 @@ fn main() -> std::io::Result<()> {
 
     parse(&mut words);
     
+    string = words.join("");
+
+    createfile(path, &string); 
+
     Ok(())
 }
  
