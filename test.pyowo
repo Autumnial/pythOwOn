@@ -1,0 +1,8 @@
+pwint("Hewwo, wowd~")
+
+i=1
+
+if 5 > 4: 
+    i++
+ewse: 
+    i--
