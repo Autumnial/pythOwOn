@@ -120,6 +120,7 @@ fn main() -> std::io::Result<()> {
 
     createfile(path, &string); 
 
+
     let mut filepath = env::current_dir().unwrap();
     filepath.push("output");
     filepath.push(path);
